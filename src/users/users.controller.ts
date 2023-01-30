@@ -23,7 +23,7 @@ export class UsersController {
 
     @UseGuards(JwtGuard)
     @Get()
-    findAll(@Req() req: Request){
-        return req.user;
+    findUser(@Req() req: Request){
+        return this.usersService.getUser(req.user);
     }
 }

@@ -16,7 +16,7 @@ export class User {
     password: string;
 
     @OneToMany(() => Note, note => note.user, {
-        cascade: ["insert","remove","remove"]
+        cascade: true
     })
-    notes: Note[];
+    public notes: Note[];
 }

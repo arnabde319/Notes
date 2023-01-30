@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, UseFilters } from "@nestjs/common";
+import { BadRequestException, ForbiddenException, Injectable, UseFilters } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -15,6 +15,7 @@ export class UsersService {
         // return createUserDto;
         try{
             const user = this.userRepository.create(createUserDto);
+            user.notes=[];
             const res = await this.userRepository.save(user);
             return this.signToken(res.id,res.email);
         }catch(error){
@@ -50,5 +51,20 @@ export class UsersService {
         return {
             access_token: token
         }
+    }
+    async getUser(user){
+        const findUser = await this.userRepository.find({
+            where:{
+                id: user.id
+            },
+            relations:{
+                notes: true
+            }
+        });
+        if(!findUser){
+            throw new BadRequestException('No user found');
+        }
+        const {password,...res}=findUser[0];
+        return res;
     }
 }
